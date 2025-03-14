@@ -8,7 +8,6 @@ from functools import partial
 from typing import Optional
 
 import torch
-from huggingface_hub import hf_hub_download
 from torch.distributed.algorithms._checkpoint.checkpoint_wrapper import (
     apply_activation_checkpointing,
 )
@@ -241,19 +240,6 @@ class Aurora(torch.nn.Module):
         pred = pred.unnormalise(surf_stats=self.surf_stats)
 
         return pred
-
-    def load_checkpoint(self, repo: str, name: str, strict: bool = True) -> None:
-        """Load a checkpoint from HuggingFace.
-
-        Args:
-            repo (str): Name of the repository of the form `user/repo`.
-            name (str): Path to the checkpoint relative to the root of the repository, e.g.
-                `checkpoint.cpkt`.
-            strict (bool, optional): Error if the model parameters are not exactly equal to the
-                parameters in the checkpoint. Defaults to `True`.
-        """
-        path = hf_hub_download(repo_id=repo, filename=name)
-        self.load_checkpoint_local(path, strict=strict)
 
     def load_checkpoint_local(self, path: str, strict: bool = True) -> None:
         """Load a checkpoint directly from a file.
